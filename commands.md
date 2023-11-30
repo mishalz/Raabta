@@ -5,3 +5,4 @@
   npm install express nodemon mongoose
 
 npm install dotenv --save
+npm install body-parser
