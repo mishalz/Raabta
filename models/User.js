@@ -15,7 +15,7 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
     min: 10,
-    max: 256,
+    max: 1024,
   },
   date: {
     type: Date,

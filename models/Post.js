@@ -27,12 +27,6 @@ const postSchema = mongoose.Schema(
         ref: "User",
       },
     ],
-    comments: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Comment",
-      },
-    ],
     expiration: {
       type: Date,
       required: true,

@@ -1,5 +1,5 @@
 {
-    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": true,
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": true,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
