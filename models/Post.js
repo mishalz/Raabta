@@ -6,12 +6,14 @@ const postSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    topic: {
-      type: String,
-      lowercase: true,
-      enum: ["politics", "health", "sport", "tech"],
-      required: true,
-    },
+    topic: [
+      {
+        type: String,
+        lowercase: true,
+        enum: ["politics", "health", "sports", "tech"],
+        required: true,
+      },
+    ],
     message: {
       type: String,
       required: true,

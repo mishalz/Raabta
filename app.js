@@ -5,7 +5,7 @@ require("dotenv").config();
 
 //importing project files
 const postRoutes = require("./routes/posts");
-const authRoutes = require("./routes/auth")
+const authRoutes = require("./routes/auth");
 
 // Starting an express app
 const app = express();
@@ -19,12 +19,12 @@ mongoose
 // route middlewares
 app.use(bodyparser.json());
 app.use("/posts", postRoutes);
-app.use("/user",authRoutes)
+app.use("/user", authRoutes);
 
 // homeroute
 app.get("/", (req, res) => res.send("Welcome to Raabta!"));
 
 // Powering the server
-app.listen(3000, () => {
+app.listen(8000, () => {
   console.log("Server is up.");
 });
