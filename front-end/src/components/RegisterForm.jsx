@@ -4,6 +4,7 @@ import Alert from "react-bootstrap/Alert";
 import Spinner from "react-bootstrap/Spinner";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/esm/Row";
+import fetchPostRequest from "../helper/fetchPostRequest";
 
 const RegisterForm = ({ setRegister }) => {
   const usernameRef = useRef();
@@ -19,36 +20,31 @@ const RegisterForm = ({ setRegister }) => {
     e.preventDefault();
     setIsLoading(true);
 
-    let username = usernameRef.current.value;
-    let email = emailRef.current.value;
-    let password = passwordRef.current.value;
+    const body = {
+      username: usernameRef.current.value,
+      email: emailRef.current.value,
+      password: passwordRef.current.value,
+    };
+    const url = "/user/register";
+    const onFetch = (data) => {
+      setIsLoading(false);
+      setResponse(data);
+      if (data.status == "error") {
+        setHasError(true);
+        setResponse({
+          status: "error",
+          message: "Registration Unsuccessful. Try again.",
+        });
+      } else if (data.status == "invalid input") {
+        setSuccess(false);
+        setHasError(true);
+      } else if (data.status == "success") {
+        setSuccess(true);
+        setHasError(false);
+      }
+    };
 
-    await fetch("/user/register", {
-      method: "POST",
-      mode: "cors", // no-cors, *cors, same-origin
-      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: "same-origin", // include, *same-origin, omit
-      headers: {
-        "Content-Type": "application/json",
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      redirect: "follow", // manual, *follow, error
-      referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: JSON.stringify({ username, email, password }), // body data type must match "Content-Type" header
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setIsLoading(false);
-        setResponse(data);
-        if (data.status == "invalid input") {
-          setSuccess(false);
-          setHasError(true);
-        } else if (data.status == "success") {
-          setSuccess(true);
-          setHasError(false);
-        }
-      })
-      .catch((err) => console.log(err));
+    fetchPostRequest(url, null, body, onFetch);
   };
   return (
     <>
@@ -57,7 +53,7 @@ const RegisterForm = ({ setRegister }) => {
       )}
       <h1>Register</h1>
       <Form onSubmit={handleSubmit}>
-        <Form.Group as={Row} className="mb-3" controlId="registerUsername">
+        <Form.Group className="mb-3" controlId="registerUsername">
           <Form.Label>Username</Form.Label>
           <Form.Control
             ref={usernameRef}
@@ -68,7 +64,7 @@ const RegisterForm = ({ setRegister }) => {
           <Form.Text className="text-muted"></Form.Text>
         </Form.Group>
 
-        <Form.Group as={Row} className="mb-3" controlId="registerEmail">
+        <Form.Group className="mb-3" controlId="registerEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control
             ref={emailRef}
@@ -79,7 +75,7 @@ const RegisterForm = ({ setRegister }) => {
           <Form.Text className="text-muted"></Form.Text>
         </Form.Group>
 
-        <Form.Group as={Row} className="mb-3" controlId="registerPassword">
+        <Form.Group className="mb-3" controlId="registerPassword">
           <Form.Label>Password</Form.Label>
           <Form.Control
             ref={passwordRef}
@@ -93,8 +89,10 @@ const RegisterForm = ({ setRegister }) => {
         <Button variant="primary" type="submit">
           {isLoading ? <Spinner animation="border" size="sm" /> : "Register"}
         </Button>
-        <div style={{ marginTop: "10px" }}>
-          Already have an account?
+        <div
+          style={{ marginTop: "10px", display: "flex", alignItems: "center" }}
+        >
+          <span>Already have an account?</span>
           <Button onClick={() => setRegister(false)} variant="link">
             Login
           </Button>

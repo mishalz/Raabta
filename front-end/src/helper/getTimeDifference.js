@@ -1,7 +1,8 @@
 const getTimeDifference = (date, inFuture) => {
   let futureDate;
   let currentDate;
-  let diff = "";
+  let diffs = "";
+  let diff;
 
   if (inFuture) {
     futureDate = new Date(date);
@@ -11,25 +12,31 @@ const getTimeDifference = (date, inFuture) => {
     currentDate = new Date(date);
   }
 
-  //see if there are years left
-  if (futureDate.getFullYear() >= currentDate.getFullYear()) {
-    if (futureDate.getFullYear() > currentDate.getFullYear()) {
-      diff = `${futureDate.getFullYear() - currentDate.getFullYear()} years`;
-    } else {
-      if (futureDate.getMonth() > currentDate.getMonth()) {
-        diff = `${futureDate.getMonth() - currentDate.getMonth()} months`;
-      } else if (futureDate.getMonth() == currentDate.getMonth()) {
-        if (futureDate.getDate() == currentDate.getDate()) {
-          diff = `${
-            futureDate.getMinutes() - currentDate.getMinutes()
-          } minutes`;
-        } else if (futureDate.getDate() > currentDate.getDate()) {
-          diff = `${futureDate.getDate() - currentDate.getDate()} days`;
+  if (futureDate.getFullYear() > currentDate.getFullYear()) {
+    diff = futureDate.getFullYear() - currentDate.getFullYear();
+    diffs = `${diff} year`;
+  } else if (futureDate.getFullYear() == currentDate.getFullYear()) {
+    if (futureDate.getMonth() > currentDate.getMonth()) {
+      diff = futureDate.getMonth() - currentDate.getMonth();
+      diffs = `${diff} month`;
+    } else if (futureDate.getMonth() == currentDate.getMonth()) {
+      if (futureDate.getDate() == currentDate.getDate()) {
+        if (futureDate.getHours() == currentDate.getHours()) {
+          diff = futureDate.getMinutes() - currentDate.getMinutes();
+          diffs = `${diff} minute`;
+        } else if (futureDate.getHours() > currentDate.getHours()) {
+          diff = futureDate.getHours() - currentDate.getHours();
+          diffs = `${diff} hour`;
         }
+      } else if (futureDate.getDate() > currentDate.getDate()) {
+        diff = futureDate.getDate() - currentDate.getDate();
+        diffs = `${diff} day`;
       }
     }
   }
 
-  return diff;
+  if (diff > 1) diffs += "s";
+
+  return diffs;
 };
 export default getTimeDifference;

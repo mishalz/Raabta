@@ -4,6 +4,7 @@ import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import Row from "react-bootstrap/esm/Row";
 import UserContext from "../context/UserContext";
+import fetchPostRequest from "../helper/fetchPostRequest";
 
 const LoginForm = ({ setRegister }) => {
   const { setToken, setUsername } = useContext(UserContext);
@@ -18,41 +19,37 @@ const LoginForm = ({ setRegister }) => {
     e.preventDefault();
     setIsLoading(true);
 
-    let email = emailRef.current.value;
-    let password = passwordRef.current.value;
+    const body = {
+      email: emailRef.current.value,
+      password: passwordRef.current.value,
+    };
+    const url = "/user/login";
 
-    await fetch("/user/login", {
-      method: "POST",
-      mode: "cors", // no-cors, *cors, same-origin
-      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: "same-origin", // include, *same-origin, omit
-      headers: {
-        "Content-Type": "application/json",
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      redirect: "follow", // manual, *follow, error
-      referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: JSON.stringify({ email, password }), // body data type must match "Content-Type" header
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setIsLoading(false);
-        setResponse(data);
-        if (data.status == "invalid input") {
-          setHasError(true);
-        } else if (data.status == "success") {
-          setHasError(false);
-          setUsername(data.username);
-          setToken(data["auth-token"]);
-        }
-      })
-      .catch((err) => console.log(err));
+    const onFetch = (data) => {
+      setIsLoading(false);
+      setResponse(data);
+      if (data.status == "invalid input") {
+        setHasError(true);
+      } else if (data.status == "error") {
+        setHasError(true);
+        setResponse({
+          status: "error",
+          message: "Login Unsuccessful. Try again.",
+        });
+      } else if (data.status == "success") {
+        setHasError(false);
+        setUsername(data.username);
+        setToken(data["auth-token"]);
+      }
+    };
+
+    fetchPostRequest(url, null, body, onFetch);
   };
   return (
     <>
       <h1>Login</h1>
       <Form onSubmit={handleSubmit}>
-        <Form.Group as={Row} className="mb-3" controlId="formBasicEmail">
+        <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control
             ref={emailRef}
@@ -63,7 +60,7 @@ const LoginForm = ({ setRegister }) => {
           <Form.Text className="text-muted"></Form.Text>
         </Form.Group>
 
-        <Form.Group as={Row} className="mb-3" controlId="formBasicPassword">
+        <Form.Group className="mb-3" controlId="formBasicPassword">
           <Form.Label>Password</Form.Label>
           <Form.Control
             ref={passwordRef}
@@ -78,8 +75,10 @@ const LoginForm = ({ setRegister }) => {
         <Button variant="primary" type="submit">
           {isLoading ? <Spinner animation="border" size="sm" /> : "Login"}
         </Button>
-        <div style={{ marginTop: "10px" }}>
-          Don't have an account?
+        <div
+          style={{ marginTop: "10px", display: "flex", alignItems: "center" }}
+        >
+          <span>Don't have an account?</span>
           <Button onClick={() => setRegister(true)} variant="link">
             Register
           </Button>

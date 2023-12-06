@@ -1,75 +1,40 @@
-import React, { useContext, useEffect, useState } from "react";
-import Post from "./Post";
-import Button from "react-bootstrap/Button";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
-import Row from "react-bootstrap/Row";
-
+import React, { useContext, useState } from "react";
 import Container from "react-bootstrap/Container";
+import Spinner from "react-bootstrap/Spinner";
+
+import Post from "./Post";
 import PostContext from "../context/PostContext";
-import UserContext from "../context/UserContext";
-import Col from "react-bootstrap/esm/Col";
-import Spinner from "react-bootstrap/esm/Spinner";
+import TopicsBar from "./TopicsBar";
 
 const Posts = () => {
-  const [topic, setTopic] = useState("health");
   const [isLoading, setIsLoading] = useState(false);
-  const { token } = useContext(UserContext);
-  const { posts, setPosts } = useContext(PostContext);
-  useEffect(() => {
-    setIsLoading(true);
-    fetch(`/posts/${topic}`, {
-      headers: {
-        "auth-token": token,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setPosts(data);
-        setIsLoading(false);
-      })
-      .catch((err) => console.log(err));
-  }, [topic]);
+  const { posts } = useContext(PostContext);
+  const [error, setError] = useState();
+  const [hasError, setHasError] = useState(false);
+
   return (
     <Container>
-      <Row className="mb-3">
-        <ButtonGroup aria-label="Basic example">
-          <Button
-            variant="primary"
-            disabled={topic == "health"}
-            onClick={() => setTopic("health")}
-          >
-            Health
-          </Button>
-          <Button
-            variant="warning"
-            disabled={topic == "tech"}
-            onClick={() => setTopic("tech")}
-          >
-            Tech
-          </Button>
-          <Button
-            variant="info"
-            disabled={topic == "sports"}
-            onClick={() => setTopic("sports")}
-          >
-            Sports
-          </Button>
-          <Button
-            variant="success"
-            disabled={topic == "politics"}
-            onClick={() => setTopic("politics")}
-          >
-            Politics
-          </Button>
-        </ButtonGroup>
-      </Row>
-      {!isLoading &&
-        posts.map((post) => <Post key={post._id} post={post}></Post>)}
+      <TopicsBar
+        setIsLoading={setIsLoading}
+        setHasError={setHasError}
+        setError={setError}
+      />
       {isLoading && (
         <div className="d-flex justify-content-center">
           <Spinner size="lg" />
         </div>
       )}
+      {!isLoading && hasError && (
+        <p style={{ color: "red", textAlign: "center" }}>{error}</p>
+      )}
+      {!isLoading && posts.length == 0 && (
+        <p style={{ textAlign: "center" }}>No posts to show.</p>
+      )}
+      {!isLoading &&
+        !hasError &&
+        posts &&
+        posts.length > 0 &&
+        posts.map((post) => <Post key={post._id} post={post}></Post>)}
     </Container>
   );
 };

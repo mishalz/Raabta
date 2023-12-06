@@ -7,66 +7,72 @@ import Col from "react-bootstrap/Col";
 import React, { useContext, useRef, useState } from "react";
 import PostContext from "../context/PostContext";
 import UserContext from "../context/UserContext";
+import fetchPostRequest from "../helper/fetchPostRequest";
 
 const PostForm = () => {
-  const { token } = useContext(UserContext);
+  const { token, setToken } = useContext(UserContext);
   const { setPosts } = useContext(PostContext);
+
   const [topics, setTopics] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState();
+  const [hasError, setHasError] = useState(false);
 
-  let [showForm, setShowForm] = useState(false);
-  let [error, setError] = useState();
-  let [hasError, setHasError] = useState(false);
+  const titleRef = useRef();
+  const messageRef = useRef();
+  const expirationRef = useRef();
+  const topicsChoices = ["Health", "Sports", "Tech", "Politics"];
 
-  let titleRef = useRef();
-  let topicRef = useRef();
-  let messageRef = useRef();
-  let expirationRef = useRef();
-  let topicsChoices = ["Health", "Sports", "Tech", "Politics"];
   const handleTopics = (e) => {
     const { value, checked } = e.target;
-    console.log(`${value}, ${checked}`);
-
-    if (checked) setTopics((t) => [...t, value]);
-    else setTopics((t) => t.filter((e) => e != value));
+    if (checked)
+      setTopics((t) => {
+        if (!t.includes(value)) return [...t, value];
+        else return [...t];
+      });
+    else {
+      setTopics((t) => {
+        if (t.includes(value)) return t.filter((e) => e != value);
+        else return [...t];
+      });
+    }
   };
-  const submitHandler = async (e) => {
-    e.preventDefault();
 
+  const submitHandler = (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setHasError(false);
     let post = {
       title: titleRef.current.value,
       topic: topics,
       message: messageRef.current.value,
       expiration: expirationRef.current.value,
     };
+    const url = "/posts";
+    const onFetch = (data) => {
+      if (data.status == "authorization error") {
+        setTimeout(() => {
+          setToken(null);
+        }, 1000);
+        setHasError(true);
+        setError(data.message);
+      } else if (data.status == "invalid input") {
+        setHasError(true);
+        setError(data.message);
+      } else if (data.status == "error") {
+        setHasError(true);
+        setError("Post could not be uploaded. Try again.");
+      } else if (data.status == "success") {
+        setHasError(false);
+        setShowForm(false);
+        setTopics([]);
+        setPosts((p) => [data.post, ...p]);
+      }
+      setIsSubmitting(false);
+    };
     //send the post to the add post api
-    await fetch("/posts", {
-      method: "POST",
-      mode: "cors", // no-cors, *cors, same-origin
-      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: "same-origin", // include, *same-origin, omit
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": token,
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      redirect: "follow", // manual, *follow, error
-      referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: JSON.stringify(post), // body data type must match "Content-Type" header
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status == "invalid input") {
-          setHasError(true);
-          setError(data.message);
-        } else if (data.status == "success") {
-          console.log("heard back from the backend");
-          console.log(data.post);
-          setHasError(false);
-          setShowForm(false);
-          setPosts((p) => [data.post, ...p]);
-        }
-      })
-      .catch((err) => console.log(err));
+    fetchPostRequest(url, token, post, onFetch);
   };
 
   return (
@@ -99,6 +105,7 @@ const PostForm = () => {
             <Col sm="10" md="10" lg="10">
               {topicsChoices.map((topic) => (
                 <Form.Check // prettier-ignore
+                  key={topic}
                   type="checkbox"
                   id={topic}
                   label={topic}
@@ -130,7 +137,7 @@ const PostForm = () => {
           {hasError && <p style={{ color: "red" }}>{error}</p>}
 
           <Button className="mb-3" variant="dark" type="submit">
-            Post
+            {isSubmitting ? <Spinner size="sm" /> : "Post "}
           </Button>
         </Form>
       )}
