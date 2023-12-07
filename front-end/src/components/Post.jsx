@@ -62,7 +62,9 @@ const Post = ({ post }) => {
         }, 1000);
         setError(data.message);
       } else if (data.status == "success") {
-        setNoOfLikes(data.message);
+        setNoOfLikes(data.likes);
+        setNoOfDislikes(data.dislikes);
+        setDislikedPosts(data.dislikedPosts);
         setLikedPosts(data.likedPosts);
       } else if (data.status == "failed") {
         setError(data.message);
@@ -82,8 +84,10 @@ const Post = ({ post }) => {
         }, 1000);
         setError(data.message);
       } else if (data.status == "success") {
-        setNoOfDislikes(data.message);
+        setNoOfLikes(data.likes);
+        setNoOfDislikes(data.dislikes);
         setDislikedPosts(data.dislikedPosts);
+        setLikedPosts(data.likedPosts);
       } else if (data.status == "failed") {
         setError(data.message);
       } else if (data.status == "error") {

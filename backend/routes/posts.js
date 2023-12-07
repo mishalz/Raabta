@@ -76,11 +76,11 @@ router.post("/:postid/like", verifyToken, checkExpiry, async (req, res) => {
     //STEP1: find the post by the id
     const post = await Post.findById(req.params.postid);
 
-    //STEP3: check if the user has already liked this post
+    //STEP2: check if the user has already liked this post
     if (post.likes.includes(req.user._id))
       return res.send({ status: "failed", message: "post is already liked" });
 
-    //STEP4: check if the user who wants to like the post is the author of the post
+    //STEP3: check if the user who wants to like the post is the author of the post
     if (post.author._id.toString() === req.user._id) {
       return res.send({
         status: "failed",
@@ -88,18 +88,26 @@ router.post("/:postid/like", verifyToken, checkExpiry, async (req, res) => {
       });
     }
 
+    //STEP4: check if user has disliked this post so that we can remove the user from the dislikes and add him from the likes
+    if (post.dislikes.includes(req.user._id)) {
+      post.dislikes.pull(req.user._id);
+    }
+
     //STEP 5: push the user id into the likes of the post
     post.likes.push(req.user._id);
     await post.save();
 
-    //STEP6: find the updated arrays of posts that the requesting user has liked
+    //STEP6: find the updated arrays of posts that the requesting user has liked and disliked
     const likedPosts = await Post.find({ likes: req.user._id }, "_id");
+    const dislikedPosts = await Post.find({ dislikes: req.user._id }, "_id");
 
     //STEP7: send the data back with appropriate message
     return res.send({
       status: "success",
-      message: post.likes.length,
+      likes: post.likes.length,
+      dislikes: post.dislikes.length,
       likedPosts: likedPosts,
+      dislikedPosts: dislikedPosts,
     });
   } catch (e) {
     return res.status(400).send({ status: "error", message: e.message });
@@ -112,14 +120,7 @@ router.post("/:postid/dislike", verifyToken, checkExpiry, async (req, res) => {
     //STEP1: find the post by id
     const post = await Post.findById(req.params.postid);
 
-    //STEP2: check if user has already disliked the post
-    if (post.dislikes.includes(req.user._id))
-      return res.send({
-        status: "failed",
-        message: "post is already disliked",
-      });
-
-    //STEP3: check if the user who wants to dislike the post is the author of the post
+    //STEP2: check if the user who wants to dislike the post is the author of the post
     if (post.author._id.toString() === req.user._id) {
       return res.send({
         status: "failed",
@@ -127,18 +128,33 @@ router.post("/:postid/dislike", verifyToken, checkExpiry, async (req, res) => {
       });
     }
 
-    //STEP 4: push the user id into the dislikes of the post
+    //STEP3: check if user has already disliked the post
+    if (post.dislikes.includes(req.user._id))
+      return res.send({
+        status: "failed",
+        message: "post is already disliked",
+      });
+
+    //STEP4: check if user has liked this post so that we can remove the user from the likes and add him to the dislikes
+    if (post.likes.includes(req.user._id)) {
+      post.likes.pull(req.user._id);
+    }
+
+    //STEP5: push the user id into the dislikes of the post
     post.dislikes.push(req.user._id);
     await post.save();
 
-    //STEP5: find the updated arrays of posts that the requesting user has disliked
+    //STEP6: find the updated arrays of posts that the requesting user has liked and disliked
+    const likedPosts = await Post.find({ likes: req.user._id }, "_id");
     const dislikedPosts = await Post.find({ dislikes: req.user._id }, "_id");
 
-    //STEP6: send the data back with appropriate message
+    //STEP7: send the data back with appropriate message
     return res.send({
       status: "success",
-      message: post.dislikes.length,
-      dislikedPosts,
+      likes: post.likes.length,
+      dislikes: post.dislikes.length,
+      likedPosts: likedPosts,
+      dislikedPosts: dislikedPosts,
     });
   } catch (e) {
     return res.status(400).send({ status: "error", message: e.message });
