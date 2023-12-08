@@ -5,7 +5,9 @@ const postValidations = (postData) => {
     title: joi.string().required(),
     topic: joi
       .array()
-      .items(joi.string().valid("politics", "health", "sports", "tech")) //topic is an array of strings, where each string can only be from the options: ["politics", "health", "sports", "tech"]
+      .items(
+        joi.string().valid("politics", "health", "sports", "tech").required()
+      ) //topic is an array of strings, where each string can only be from the options: ["politics", "health", "sports", "tech"]
       .required(),
     message: joi.string().required(),
     expiration: joi.date().greater("now").required(), //the expiration date must be greater than the current date
