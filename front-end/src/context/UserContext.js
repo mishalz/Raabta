@@ -1,4 +1,5 @@
 import { createContext, useState } from "react";
+/*contains the states for the user related details*/
 
 export const UserContext = createContext();
 

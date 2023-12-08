@@ -16,6 +16,7 @@ const RegisterForm = ({ setRegister }) => {
   const [hasError, setHasError] = useState(false);
   const [response, setResponse] = useState();
 
+  //event handler for when the user clicks the register button
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);

@@ -10,15 +10,18 @@ import fetchPostRequest from "../helper/fetchPostRequest";
 import fetchGetRequest from "../helper/fetchGetRequest";
 
 const Comments = ({ postid, setNoOfComments, expired }) => {
+  //the states of the component
   const [comments, setComments] = useState([]);
   const [fetchError, setFetchError] = useState(null);
   const [postError, setPostError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  //retrieving the token and settoken from the context
   const { token, setToken } = useContext(UserContext);
 
   const commentRef = useRef();
 
+  //for fetching the comments when the component is rendered
   useEffect(() => {
     setIsLoading(true);
     setFetchError(null);
@@ -44,6 +47,7 @@ const Comments = ({ postid, setNoOfComments, expired }) => {
     fetchGetRequest(url, token, onFetch);
   }, []);
 
+  //event handler for when a comment is submitted for a post
   const addComment = async () => {
     setIsSubmitting(true);
     setPostError(false);

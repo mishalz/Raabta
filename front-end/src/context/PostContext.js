@@ -1,5 +1,7 @@
 import { createContext, useState } from "react";
 
+/*Contains the states related to the posts, and the disliked and liked posts of the current user */
+
 export const PostContext = createContext();
 
 export const PostContextProvider = ({ children }) => {

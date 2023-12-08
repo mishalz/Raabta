@@ -15,6 +15,7 @@ const LoginForm = ({ setRegister }) => {
   const [hasError, setHasError] = useState(false);
   const [response, setResponse] = useState();
 
+  //event handler when the user clicks the login button
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);

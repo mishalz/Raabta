@@ -13,6 +13,7 @@ const TopicsBar = ({ setIsLoading, setError, setHasError }) => {
   const { setPosts, setLikedPosts, setDislikedPosts } = useContext(PostContext);
   const [sortingOpt, setSortingOpt] = useState("createdAt");
 
+  //for loading the initial posts when a topic is selected and set it to the posts context so that it is changed throughout the app
   useEffect(() => {
     setIsLoading(true);
     const url = `/posts/${topic}`;

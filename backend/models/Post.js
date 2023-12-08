@@ -23,8 +23,8 @@ const postSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
-    likes: [String],
-    dislikes: [String],
+    likes: [String], //stores the ids in string, of the users that liked the post
+    dislikes: [String], //stores the ids in string, of the users that disliked the post
     comments: [
       {
         author: {

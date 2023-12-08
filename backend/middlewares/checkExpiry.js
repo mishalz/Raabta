@@ -16,6 +16,8 @@ const checkExpiry = async (req, res, next) => {
     //STEP4: if the difference is 0 or negative, the post has expired, return the error
     if (difference <= 0)
       return res.send({ status: "failed", message: "post is expired" });
+
+    //STEP5: forward the request
     next();
   } catch (e) {
     return res.status(400).send({ status: "error", message: e.message });

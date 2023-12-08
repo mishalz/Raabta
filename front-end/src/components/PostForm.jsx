@@ -24,6 +24,7 @@ const PostForm = () => {
   const expirationRef = useRef();
   const topicsChoices = ["Health", "Sports", "Tech", "Politics"];
 
+  //for choosing topics
   const handleTopics = (e) => {
     const { value, checked } = e.target;
     if (checked)
@@ -39,16 +40,19 @@ const PostForm = () => {
     }
   };
 
+  //event handler for when the post is posted
   const submitHandler = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setHasError(false);
+
     let post = {
       title: titleRef.current.value,
       topic: topics,
       message: messageRef.current.value,
       expiration: expirationRef.current.value,
     };
+
     const url = "/posts";
     const onFetch = (data) => {
       if (data.status == "authorization error") {

@@ -1,14 +1,14 @@
 /*This file includes r*/
 const express = require("express");
-const router = express.Router();
 const mongoose = require("mongoose");
 
 const Post = require("../models/Post");
 const verifyToken = require("../middlewares/verifyToken");
 const postValidations = require("../validations/PostValidation");
-
-const commentRoutes = require("./comments");
 const checkExpiry = require("../middlewares/checkExpiry");
+const commentRoutes = require("./comments");
+
+const router = express.Router();
 
 //forwarding to the routes for interacting with comments of a post
 router.use("/comments", commentRoutes);
@@ -44,14 +44,14 @@ router.post("/", verifyToken, async (req, res) => {
 // <-----Operation 2: Get all posts by each topic and with the sorting config----->
 router.get("/:topic", verifyToken, async (req, res) => {
   try {
-    //STEP1: retrieve the desired topic and sorting confid
+    //STEP1: retrieve the desired topic from the params and sorting config from the header
     const topic = req.params.topic.toLowerCase();
     const sortingField = req.header("sort-by");
 
     //STEP2: query for all posts that have the requested topic and sort accordingly
     const posts = await Post.find({ topic: topic })
       .populate({ path: "author", select: "username" }) //populate the author details for displaying
-      .sort(`-${sortingField}`)
+      .sort(`-${sortingField}`) //sort according to the sorting config by the user. '-' sign shows 'desc' order
       .limit(10);
 
     //STEP3: query for all the posts in the topic that the requesting user has liked and disliked

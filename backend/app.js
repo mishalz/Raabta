@@ -21,9 +21,6 @@ app.use(bodyparser.json());
 app.use("/posts", postRoutes);
 app.use("/user", authRoutes);
 
-// homeroute
-app.get("/", (req, res) => res.send("Welcome to Raabta!"));
-
 // Powering the server
 app.listen(8000, () => {
   console.log("Server is up.");

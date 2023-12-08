@@ -1,13 +1,14 @@
 const express = require("express");
 const bcryptjs = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
-const router = express.Router();
 
 const User = require("../models/User");
 const {
   registerValidations,
   loginValidations,
 } = require("../validations/UserValidations");
+
+const router = express.Router();
 
 // <-----Operation 1: Register user----->
 router.post("/register", async (req, res) => {

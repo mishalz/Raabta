@@ -54,6 +54,7 @@ const Post = ({ post }) => {
     politics: "green",
   };
 
+  //event handler for when the like button is clicked
   const addLike = () => {
     const onFetch = (data) => {
       if (data.status == "authorization error") {
@@ -76,6 +77,7 @@ const Post = ({ post }) => {
     fetchPostRequest(url, token, {}, onFetch);
   };
 
+  //event handler for when a dislike button is clicked
   const addDislike = () => {
     const onFetch = (data) => {
       if (data.status == "authorization error") {
