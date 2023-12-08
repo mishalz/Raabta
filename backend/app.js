@@ -15,6 +15,11 @@ mongoose
   .connect(process.env.DB_URL)
   .then(() => console.log("DB is up and running"));
 
+//test home route
+app.get("/", (req, res) => {
+  console.log("raabta server is working");
+});
+
 //<-----Routes----->
 // route middlewares
 app.use(bodyparser.json());
