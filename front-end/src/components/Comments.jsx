@@ -17,7 +17,7 @@ const Comments = ({ postid, setNoOfComments, expired }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   //retrieving the token and settoken from the context
-  const { token, setToken } = useContext(UserContext);
+  const { token, setToken, username } = useContext(UserContext);
 
   const commentRef = useRef();
 
@@ -36,8 +36,8 @@ const Comments = ({ postid, setNoOfComments, expired }) => {
         setFetchError(data.message);
       } else if (data.status == "success") {
         setFetchError(null);
-        setComments(data.comments.comments);
-        setNoOfComments(data.comments.comments.length);
+        setComments(data.comments);
+        setNoOfComments(data.comments.length);
       } else if (data.status == "error") {
         setFetchError("Unable to fetch comments.");
       }
@@ -51,7 +51,7 @@ const Comments = ({ postid, setNoOfComments, expired }) => {
   const addComment = async () => {
     setIsSubmitting(true);
     setPostError(false);
-    let body = { body: commentRef.current.value };
+    let body = { body: commentRef.current.value, author: username };
     let url = `/posts/comments/${postid}`;
 
     const onFetch = (data) => {
@@ -65,8 +65,8 @@ const Comments = ({ postid, setNoOfComments, expired }) => {
       } else if (data.status == "success") {
         setPostError(null);
         commentRef.current.value = " ";
-        setComments(data.comments);
-        setNoOfComments(data.comments.length);
+        setComments((c) => [...comments, data.comment]);
+        setNoOfComments((c) => c + 1);
       } else if (data.status == "error") {
         setPostError("Unable to post comment.");
       }

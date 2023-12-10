@@ -32,7 +32,7 @@ const Post = ({ post }) => {
   const [error, setError] = useState();
   const [noOfLikes, setNoOfLikes] = useState(post.likes.length);
   const [noOfDislikes, setNoOfDislikes] = useState(post.dislikes.length);
-  const [noOfComments, setNoOfComments] = useState(post.comments.length);
+  const [noOfComments, setNoOfComments] = useState();
 
   let liked = likedPosts.some((p) => p._id == post._id);
   let disliked = dislikedPosts.some((p) => p._id == post._id);

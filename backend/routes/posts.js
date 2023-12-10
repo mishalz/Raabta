@@ -28,13 +28,11 @@ router.post("/", verifyToken, async (req, res) => {
       ...req.body,
       likes: [],
       dislikes: [],
-      comments: [],
-      author: new mongoose.Types.ObjectId(req.user._id),
+      author: { username: req.body.author, id: req.user._id },
     });
     const savedPost = await post.save();
 
     //STEP3: populate the author details before sending back
-    await savedPost.populate("author", "username");
     return res.send({ status: "success", post: savedPost });
   } catch (e) {
     return res.status(400).send({ status: "error", message: e.message });
@@ -50,7 +48,6 @@ router.get("/:topic", verifyToken, async (req, res) => {
 
     //STEP2: query for all posts that have the requested topic and sort accordingly
     const posts = await Post.find({ topic: topic })
-      .populate({ path: "author", select: "username" }) //populate the author details for displaying
       .sort(`-${sortingField}`) //sort according to the sorting config by the user. '-' sign shows 'desc' order
       .limit(10);
 
@@ -81,7 +78,7 @@ router.post("/:postid/like", verifyToken, checkExpiry, async (req, res) => {
       return res.send({ status: "failed", message: "post is already liked" });
 
     //STEP3: check if the user who wants to like the post is the author of the post
-    if (post.author._id.toString() === req.user._id) {
+    if (post.author.id === req.user._id) {
       return res.send({
         status: "failed",
         message: "Authors cannot like their posts.",
@@ -121,7 +118,7 @@ router.post("/:postid/dislike", verifyToken, checkExpiry, async (req, res) => {
     const post = await Post.findById(req.params.postid);
 
     //STEP2: check if the user who wants to dislike the post is the author of the post
-    if (post.author._id.toString() === req.user._id) {
+    if (post.author.id === req.user._id) {
       return res.send({
         status: "failed",
         message: "Authors cannot dislike their posts.",

@@ -27,7 +27,7 @@ const Posts = () => {
       {!isLoading && hasError && (
         <p style={{ color: "red", textAlign: "center" }}>{error}</p>
       )}
-      {!isLoading && posts.length == 0 && (
+      {!isLoading && posts && posts.length == 0 && (
         <p style={{ textAlign: "center" }}>No posts to show.</p>
       )}
       {!isLoading &&

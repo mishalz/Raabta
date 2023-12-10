@@ -4,14 +4,14 @@ import getTimeDifference from "../helper/getTimeDifference";
 
 const Comment = ({ comment }) => {
   //get the time that has passed since the comment was made
-  const timePassed = getTimeDifference(comment.datePosted, false);
+  const timePassed = getTimeDifference(comment.createdAt, false);
 
   //UI
   return (
     <Row>
       <hr></hr>
       <Col>
-        <span style={{ fontWeight: "bold" }}>{comment.author.username}:</span>{" "}
+        <span style={{ fontWeight: "bold" }}>{comment.author}:</span>{" "}
         <span>{comment.body}</span>
       </Col>
       <Col className="mb-3" style={{ textAlign: "right" }}>

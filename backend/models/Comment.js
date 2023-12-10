@@ -2,18 +2,14 @@ const mongoose = require("mongoose");
 
 const commentSchema = mongoose.Schema(
   {
+    post: { type: mongoose.Types.ObjectId, ref: "Post" },
     author: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      type: String,
       required: true,
     },
     body: {
       type: String,
       required: true,
-    },
-    datePosted: {
-      type: Date,
-      default: Date.now,
     },
   },
   { timestamps: true }

@@ -10,7 +10,7 @@ import UserContext from "../context/UserContext";
 import fetchPostRequest from "../helper/fetchPostRequest";
 
 const PostForm = () => {
-  const { token, setToken } = useContext(UserContext);
+  const { token, setToken, username } = useContext(UserContext);
   const { setPosts } = useContext(PostContext);
 
   const [topics, setTopics] = useState([]);
@@ -49,6 +49,7 @@ const PostForm = () => {
     let post = {
       title: titleRef.current.value,
       topic: topics,
+      author: username,
       message: messageRef.current.value,
       expiration: expirationRef.current.value,
     };

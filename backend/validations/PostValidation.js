@@ -10,6 +10,7 @@ const postValidations = (postData) => {
       ) //topic is an array of strings, where each string can only be from the options: ["politics", "health", "sports", "tech"]
       .required(),
     message: joi.string().required(),
+    author: joi.string().required(),
     expiration: joi.date().greater("now").required(), //the expiration date must be greater than the current date
   });
   return postSchema.validate(postData);
