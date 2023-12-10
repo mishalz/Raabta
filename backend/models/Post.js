@@ -25,23 +25,7 @@ const postSchema = mongoose.Schema(
     },
     likes: [String], //stores the ids in string, of the users that liked the post
     dislikes: [String], //stores the ids in string, of the users that disliked the post
-    comments: [
-      {
-        author: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-          required: true,
-        },
-        body: {
-          type: String,
-          required: true,
-        },
-        datePosted: {
-          type: Date,
-          default: Date.now,
-        },
-      },
-    ],
+    comments: [{ type: mongoose.Types.ObjectId, ref: "Comment" }],
     expiration: {
       type: Date,
       required: true,
